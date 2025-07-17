@@ -3,19 +3,20 @@ import { CustomError } from "../helper/CustomError";
 import { compareHashPassword } from "../helper/bcrypt";
 import { User } from "../models/user.model";
 import { checkToken, generateAccessToken, generateRefreshToken } from "../helper/jwt";
+import { Validations } from "../validation/user.validation";
 
 export const UserController = {
   async login(req: Request, res: Response, next: NextFunction) {
     try {
-      const { username, password } = req?.body;
+      const { email, password } = await Validations.LoginValidation(req?.body);
       const userIsExists = await User.findOne({
         where: {
-          username,
+          email,
         },
         raw: true,
       });
       if (!userIsExists) {
-        throw new CustomError("User does not exist with this username: " + username, 400);
+        throw new CustomError("User does not exist with this email: " + email, 400);
       }
 
       const isEqual = compareHashPassword(password, userIsExists?.password);
@@ -24,7 +25,7 @@ export const UserController = {
       }
 
       const targetUser = await User.findOne({
-        where: { username },
+        where: { email },
         attributes: {
           exclude: ["password"],
         },

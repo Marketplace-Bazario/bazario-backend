@@ -13,8 +13,6 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
     if (!decodedToken) {
       throw new CustomError("Token is invalid!", 401);
     }
-    // @ts-ignore
-    console.log(decodedToken?.userId);
 
     // @ts-ignore
     req.userId = decodedToken?.userId;

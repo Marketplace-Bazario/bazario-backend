@@ -4,7 +4,11 @@ dotend.config();
 import { urlencoded } from "body-parser";
 import sequelize from "./db/database";
 import adminUserRouter from "./routes/admin/user.routes";
+import categoryRouter from "./routes/admin/category.routes";
+
 import { initAdmin } from "./helper/init";
+import { errorMiddleware } from "./middleware/errorMiddleware";
+import path from "path";
 
 const port = process.env.PORT;
 
@@ -17,6 +21,11 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/admin/auth", adminUserRouter);
+app.use("/admin/category", categoryRouter);
+
+app.use("/files", express.static(path.join(__dirname, "./public/files")));
+
+app.use(errorMiddleware);
 
 const serverStart = async () => {
   try {
