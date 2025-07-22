@@ -15,7 +15,7 @@ router.get("/", authMiddleware, CategoryController.getAllCategories);
 router.get("/:id", authMiddleware, CategoryController.getCategoryById);
 
 // Update a category by ID
-router.put("/:id", authMiddleware, CategoryController.updateCategory);
+router.put("/:id", authMiddleware, upload.single("image"), CategoryController.updateCategory);
 
 // Delete a category by ID
 router.delete("/:id", authMiddleware, CategoryController.deleteCategory);

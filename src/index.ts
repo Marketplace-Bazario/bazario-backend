@@ -5,6 +5,7 @@ import { urlencoded } from "body-parser";
 import sequelize from "./db/database";
 import adminUserRouter from "./routes/admin/user.routes";
 import categoryRouter from "./routes/admin/category.routes";
+import productRouter from "./routes/admin/product.routes";
 
 import { initAdmin } from "./helper/init";
 import { errorMiddleware } from "./middleware/errorMiddleware";
@@ -22,6 +23,7 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/admin/auth", adminUserRouter);
 app.use("/admin/category", categoryRouter);
+app.use("/admin/product", productRouter);
 
 app.use("/files", express.static(path.join(__dirname, "./public/files")));
 
