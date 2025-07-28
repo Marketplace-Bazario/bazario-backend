@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { CategoryController } from '../../controller/category.controller';
 import { authMiddleware } from '../../middleware/authMiddleware';
 import { upload } from '../../middleware/upload.middleware';
 import { ProductController } from '../../controller/product.controller';
@@ -11,14 +10,15 @@ router.post('/', authMiddleware, upload.array('image', 10), ProductController.cr
 
 // Get all products
 router.get('/', authMiddleware, ProductController.getProducts);
+
 //
-// // Get a category by ID
-// router.get("/:id", authMiddleware, CategoryController.getCategoryById);
+// // Get a product by ID
+router.get('/:id', authMiddleware, ProductController.getProductById);
 //
-// // Update a category by ID
-// router.put("/:id", authMiddleware, upload.single("image"), CategoryController.updateCategory);
+// Update a product by ID
+router.put('/:id', authMiddleware, upload.array('image', 10), ProductController.updateProduct);
 //
-// // Delete a category by ID
-// router.delete("/:id", authMiddleware, CategoryController.deleteCategory);
+// // Delete a product by ID
+router.delete('/:id', authMiddleware, ProductController.deleteProduct);
 
 export default router;

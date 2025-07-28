@@ -62,7 +62,7 @@ export const CategoryController = {
         newImageUrl = req.file.filename;
         await removeFile(category?.dataValues?.image);
       }
-      await category.update({ name, description, image: newImageUrl, isActive, sortOrder });
+      await category.update({ name: JSON.parse(name), description:JSON.parse(description), image: newImageUrl, isActive, sortOrder });
       res.status(200).json({ ok: true, message: 'Category updated successfully', category });
     } catch (error) {
       next(error);

@@ -29,6 +29,7 @@ export class ProductValidations {
       isActive: Joi.boolean().optional().messages({
         'boolean.base': 'isActive should be a boolean',
       }),
+      images: Joi.alternatives().try(Joi.string(), Joi.array().items(Joi.string())).optional(),
     }).validateAsync(data);
   }
 }

@@ -1,7 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import { Product } from '../models/product.model';
 import { ProductValidations } from '../validation/product.validation';
-
+import { CustomError } from '../helper/CustomError';
+import { filterImages, removeFile, removeFiles } from '../helper/removeFile';
+// react + vite + typescript + tailwind + react-hook-form +sooner + react-query + MUI
 export const ProductController = {
   async getProducts(req: Request, res: Response, next: NextFunction) {
     try {
@@ -11,7 +13,7 @@ export const ProductController = {
       const { count: totalCount, rows: products } = await Product.findAndCountAll({
         limit,
         offset,
-        order:[[ 'createdAt', 'ASC' ]],
+        order: [['createdAt', 'ASC']],
       });
 
       res.status(200).json({ ok: true, products, pagination: { totalCount, limit, offset } });
@@ -34,6 +36,69 @@ export const ProductController = {
       });
 
       res.status(201).json({ ok: true, message: 'Product created successfully', product });
+    } catch (error) {
+      next(error);
+    }
+  },
+  async getProductById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const product = await Product.findByPk(id);
+      if (!product) {
+        throw new CustomError('Product not found', 404);
+      }
+      res.status(200).json({
+        ok: true,
+        product,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  async updateProduct(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const { name, description, price, stock, minStock, images } = await ProductValidations.ProductValidation(
+        req.body,
+      );
+      const product = await Product.findByPk(id);
+
+      if (!product) {
+        throw new CustomError('Product not found', 404);
+      }
+
+      let newImages = await filterImages(images, product?.images, req?.files);
+
+      await product.update({
+        name: name,
+        description: description,
+        price: price,
+        images: newImages,
+        stock: stock,
+        minStock: minStock,
+      });
+
+      res.status(200).json({
+        ok: true,
+        message: 'Product updated successfully',
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  async deleteProduct(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const product = await Product.findByPk(id);
+      if (!product) {
+        throw new CustomError('Product not found', 404);
+      }
+      await removeFiles(product.images);
+      await product.destroy();
+      res.status(200).json({
+        ok: true,
+        message: 'Product deleted successfully',
+      });
     } catch (error) {
       next(error);
     }
