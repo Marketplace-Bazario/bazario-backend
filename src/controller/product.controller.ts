@@ -27,8 +27,8 @@ export const ProductController = {
 
       const productImages: any = req.files || [];
       const product = await Product.create({
-        name,
-        description,
+        name: JSON.parse(name),
+        description: JSON.parse(description),
         price,
         stock,
         minStock,
@@ -70,8 +70,8 @@ export const ProductController = {
       let newImages = await filterImages(images, product?.images, req?.files);
 
       await product.update({
-        name: name,
-        description: description,
+        name: JSON.parse(name),
+        description: JSON.parse(description),
         price: price,
         images: newImages,
         stock: stock,
